@@ -17,14 +17,19 @@ export default function CountUp({
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, amount: 0.4 });
   const mv = useMotionValue(0);
-  const rounded = useTransform(mv, (v) =>
-    format ? format(v) : v.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals })
-  );
+  const rounded = useTransform(mv, (v) => {
+    const n = Number.isFinite(v) ? v : 0;
+    return format
+      ? format(n)
+      : n.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+  });
   const [text, setText] = useState(format ? format(0) : "0");
 
   useEffect(() => {
     if (!inView) return;
-    const controls = animate(mv, value, {
+    const target = Number(value);
+    if (!Number.isFinite(target)) return;
+    const controls = animate(mv, target, {
       duration,
       ease: [0.2, 0.8, 0.2, 1],
     });

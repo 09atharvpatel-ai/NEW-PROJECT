@@ -293,7 +293,10 @@ export default function Hero() {
   useEffect(() => {
     axios
       .get(`${API}/waitlist/stats`)
-      .then((r) => setCount(r.data.displayed_count))
+      .then((r) => {
+        const n = Number(r.data?.displayed_count);
+        if (Number.isFinite(n)) setCount(n);
+      })
       .catch(() => {});
   }, []);
 
