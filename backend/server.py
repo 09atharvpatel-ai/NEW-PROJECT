@@ -12,7 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError
 from datetime import datetime, timezone, timedelta
 
-from database import get_db
+from database import get_db, engine, Base
 from models import WaitlistEntry
 
 ROOT_DIR = Path(__file__).parent
@@ -23,6 +23,13 @@ REFERRALS_REQUIRED_FOR_BETA = 3
 
 app = FastAPI()
 api_router = APIRouter(prefix="/api")
+
+
+@app.on_event("startup")
+async def _ensure_schema():
+    """Create the waitlist table in Supabase on boot if it doesn't exist."""
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
 
 
 # ---------- Schemas ----------
