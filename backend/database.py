@@ -4,10 +4,15 @@ from dotenv import load_dotenv
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 from sqlalchemy.orm import DeclarativeBase
 
-load_dotenv(Path(__file__).parent / ".env")
+# override=True so the project's local backend/.env (the correct Supabase
+# pooler URL) always wins over any stale DATABASE_URL inherited from the
+# parent process environment.
+load_dotenv(Path(__file__).parent / ".env", override=True)
 
 DATABASE_URL = os.environ["DATABASE_URL"]
-ASYNC_DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://")
+ASYNC_DATABASE_URL = DATABASE_URL.replace("postgresql+psycopg2://", "postgresql://").replace(
+    "postgresql://", "postgresql+asyncpg://"
+)
 
 engine = create_async_engine(
     ASYNC_DATABASE_URL,

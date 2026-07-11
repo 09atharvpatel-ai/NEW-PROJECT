@@ -16,7 +16,7 @@ from database import get_db, engine, Base
 from models import WaitlistEntry
 
 ROOT_DIR = Path(__file__).parent
-load_dotenv(ROOT_DIR / ".env")
+load_dotenv(ROOT_DIR / ".env", override=True)
 
 BETA_ACCESS_CAP = 100  # Only the first 100 hitting 3+ referrals get beta access
 REFERRALS_REQUIRED_FOR_BETA = 3
